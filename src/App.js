@@ -1,12 +1,14 @@
 import React, { Component } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import countries from "./countries.json";
+import { getCountries } from "./Components/Api";
 import CountryList from "./Components/CountryList";
 import Dropdown from "./Components/Dropdown";
 import SearchBar from "./Components/SearchBar";
+import CountryDetails from "./Components/CountryDetails";
 
 class App extends Component {
-  state = { countries: countries, searchInput: "", selectedOption: "Select" };
+  state = { countries: [], searchInput: "", selectedOption: "Select" };
   onChangeSelect = (value) => {
     this.setState({ selectedOption: value });
   };
@@ -14,6 +16,16 @@ class App extends Component {
   onChangeSearch = (value) => {
     this.setState({ searchInput: value });
   };
+
+  componentDidMount() {
+    getCountries()
+      .then((res) => {
+        this.setState({ countries: res.data });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   render() {
     const filteredCountries = this.state.countries.reduce((acc, curr) => {
@@ -56,27 +68,33 @@ class App extends Component {
       },
       ["Select"]
     );
-    console.log(filteredCountries);
+    //console.log(filteredCountries);
     return (
-      <>
-        <nav style={{ width: "100%", textAlign: "center" }}>
-          <SearchBar
-            onChangeSearch={this.onChangeSearch}
-            searchInput={this.state.searchInput}
-          />
-          <Dropdown
-            selectedOption={this.state.selectedOption}
-            options={regions}
-            onChangeSelect={this.onChangeSelect}
-          />
-        </nav>
-
-        {filteredCountries.length === 0 ? (
-          <p>No Countries Found</p>
-        ) : (
-          <CountryList countries={filteredCountries} />
-        )}
-      </>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <>
+              <nav style={{ width: "100%", textAlign: "center" }}>
+                <SearchBar
+                  onChangeSearch={this.onChangeSearch}
+                  searchInput={this.state.searchInput}
+                />
+                <Dropdown
+                  selectedOption={this.state.selectedOption}
+                  options={regions}
+                  onChangeSelect={this.onChangeSelect}
+                />
+              </nav>
+              {filteredCountries.length === 0 ? (
+                <p>No Countries Found</p>
+              ) : (
+                <CountryList countries={filteredCountries} />
+              )}
+            </>
+          </Route>
+          <Route path="/:cca3" component={CountryDetails} />
+        </Switch>
+      </Router>
     );
   }
 }

@@ -1,11 +1,15 @@
+import { Link } from "react-router-dom";
+
 const Country = (props) => {
   return (
-    <div
+    <Link
+      to={`/${props.cca3}`}
       style={{
         width: "20%",
         padding: "2rem",
         margin: "1rem",
         boxShadow: "0px 0px 13px 0px rgba(0,0,0,0.75)",
+        textDecoration: "none",
       }}
     >
       <img
@@ -17,7 +21,7 @@ const Country = (props) => {
       <p>{`Population: ${props.population}`}</p>
       <p>{`Region: ${props.region}`}</p>
       <p>{`Capital: ${props.capital}`}</p>
-    </div>
+    </Link>
   );
 };
 
