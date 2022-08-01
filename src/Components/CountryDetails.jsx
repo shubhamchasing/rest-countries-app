@@ -15,11 +15,14 @@ class CountryDetails extends Component {
   }
   
 
-  componentDidUpdate(){
+  componentDidUpdate(prevProps){
+   //console.log('prevProps:' ,prevProps.match.params.cca3)
+   //console.log('new:', this.props.match.params.cca3)
+    if(prevProps.match.params.cca3 !== this.props.match.params.cca3){
     const newCode = this.props.match.params.cca3
     getCountryDetails(newCode).then((res)=>{
         this.setState({country: res.data[0]})
-    })
+    })}
   }
 
   render() {
@@ -65,8 +68,7 @@ class CountryDetails extends Component {
                 <li>{capital}</li>
                 <li>{tld}</li>
                 {borders !== undefined ? borders.map((a) => {
-                   
-                 return <Link key= {a} to={`/${a}`}> <button >{a}</button></Link>
+                 return <Link key= {a} to={`/${a}`}><button >{a}</button></Link>
                 }) : ""}
               </ul>
             </div>
