@@ -6,9 +6,15 @@ import CountryList from "./Components/CountryList";
 import Dropdown from "./Components/Dropdown";
 import SearchBar from "./Components/SearchBar";
 import CountryDetails from "./Components/CountryDetails";
+import Spinner from "./Components/Spinner";
 
 class App extends Component {
-  state = { countries: [], searchInput: "", selectedOption: "Select" };
+  state = {
+    countries: [],
+    searchInput: "",
+    selectedOption: "Select",
+    isLoading: true,
+  };
   onChangeSelect = (value) => {
     this.setState({ selectedOption: value });
   };
@@ -20,7 +26,7 @@ class App extends Component {
   componentDidMount() {
     getCountries()
       .then((res) => {
-        this.setState({ countries: res.data });
+        this.setState({ countries: res.data, isLoading: false });
       })
       .catch((err) => {
         console.log(err);
@@ -68,29 +74,34 @@ class App extends Component {
       },
       ["Select"]
     );
-    //console.log(filteredCountries);
     return (
       <Router>
         <Switch>
           <Route exact path="/">
-            <>
-              <nav style={{ width: "100%", textAlign: "center" }}>
-                <SearchBar
-                  onChangeSearch={this.onChangeSearch}
-                  searchInput={this.state.searchInput}
-                />
-                <Dropdown
-                  selectedOption={this.state.selectedOption}
-                  options={regions}
-                  onChangeSelect={this.onChangeSelect}
-                />
-              </nav>
-              {filteredCountries.length === 0 ? (
-                <p>No Countries Found</p>
+            <div style={{ height: "100vh" }}>
+              {this.state.isLoading ? (
+                <Spinner />
               ) : (
-                <CountryList countries={filteredCountries} />
+                <>
+                  <nav style={{ width: "100%", textAlign: "center" }}>
+                    <SearchBar
+                      onChangeSearch={this.onChangeSearch}
+                      searchInput={this.state.searchInput}
+                    />
+                    <Dropdown
+                      selectedOption={this.state.selectedOption}
+                      options={regions}
+                      onChangeSelect={this.onChangeSelect}
+                    />
+                  </nav>
+                  {filteredCountries.length === 0 ? (
+                    <p style={{ textAlign: "center" }}>No Countries Found</p>
+                  ) : (
+                    <CountryList countries={filteredCountries} />
+                  )}
+                </>
               )}
-            </>
+            </div>
           </Route>
           <Route path="/:cca3" component={CountryDetails} />
         </Switch>
