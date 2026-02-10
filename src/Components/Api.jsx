@@ -1,7 +1,7 @@
 import axios from "axios";
 
 function getCountries() {
-  return axios.get("https://restcountries.com/v3.1/all");
+  return axios.get("https://restcountries.com/v3.1/independent?status=true");
 }
 
 function getCountryDetails(code) {
